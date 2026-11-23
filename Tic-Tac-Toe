@@ -1,0 +1,112 @@
+import random
+
+
+def display_board(board):
+    print("+-------+-------+-------+")
+    for row in range(0, 9, 3):
+        print("|       |       |       |")
+        print(f"|   {board[row]}   |   {board[row+1]}   |   {board[row+2]}   |")
+        print("|       |       |       |")
+        print("+-------+-------+-------+")
+
+
+def make_list_of_free_fields(board):
+    free = []
+
+    for i in range(9):
+        if str(board[i]).isdigit():
+            free.append(i)
+
+    return free
+
+
+def enter_move(board):
+    while True:
+        try:
+            move = int(input("Enter your move (1-9): "))
+
+            if move < 1 or move > 9:
+                print("Number must be between 1 and 9.")
+                continue
+
+            if not str(board[move - 1]).isdigit():
+                print("Square already occupied.")
+                continue
+
+            board[move - 1] = 'O'
+            break
+
+        except ValueError:
+            print("Please enter a valid number.")
+
+
+def draw_move(board):
+    free = make_list_of_free_fields(board)
+
+    if free:
+        move = random.choice(free)
+        board[move] = 'X'
+
+
+def victory_for(board, sign):
+    winning_combinations = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ]
+
+    for combo in winning_combinations:
+        if (board[combo[0]] == sign and
+            board[combo[1]] == sign and
+            board[combo[2]] == sign):
+            return True
+
+    return False
+
+
+def game_over(board):
+    return len(make_list_of_free_fields(board)) == 0
+
+
+# Main Program
+
+board = [1, 2, 3, 4, 'X', 6, 7, 8, 9]
+
+print("Welcome to Tic-Tac-Toe!")
+print("You are O")
+print("Computer is X")
+
+while True:
+
+    display_board(board)
+
+    # User move
+    enter_move(board)
+
+    if victory_for(board, 'O'):
+        display_board(board)
+        print("Congratulations! You win!")
+        break
+
+    if game_over(board):
+        display_board(board)
+        print("It's a draw!")
+        break
+
+    # Computer move
+    draw_move(board)
+
+    if victory_for(board, 'X'):
+        display_board(board)
+        print("Computer wins!")
+        break
+
+    if game_over(board):
+        display_board(board)
+        print("It's a draw!")
+        break
